@@ -139,6 +139,11 @@ jobs:
           AGNES_API_KEY: "sk-dummy"
           NVIDIA_NIM_API_KEY: "nvapi-dummy"
           ORF_MCP_ALLOWED_DIRS: "/tmp:/home/runner/work/Omni_Suite"
+          # OL fail-CLOSES without its own allowlist (security.py:283 ->
+          # ValueError -> misleading OL_INVALID_INPUT). Note the separator:
+          # OL's get_default_validator splits on ',' (ORF's parser above uses
+          # ':'/';'), so this value must be comma-separated.
+          OL_MCP_ALLOWED_DIRS: "/tmp,/home/runner/work/Omni_Suite"
           # MCP smoke tests fire many tool calls in quick succession; a
           # token-bucket RPM cap (default 60) trips them. Disable like
           # the validation workflow does (AGENTS.md: "Set 0 for full
@@ -154,6 +159,7 @@ jobs:
           AGNES_API_KEY: "sk-dummy"
           NVIDIA_NIM_API_KEY: "nvapi-dummy"
           ORF_MCP_ALLOWED_DIRS: "/tmp:/home/runner/work/Omni_Suite"
+          OL_MCP_ALLOWED_DIRS: "/tmp,/home/runner/work/Omni_Suite"
           OMNI_RATE_LIMIT_RPM: "0"
 
       - name: Clean up test artifacts
