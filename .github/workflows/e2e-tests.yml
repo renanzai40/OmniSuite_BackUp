@@ -70,7 +70,15 @@ jobs:
         run: uv sync --locked
 
       - name: Install test deps (pytest + docx/pptx/pandoc + structlog/otel + psutil + pytest-timeout + weasyprint for CI-G3)
-        run: uv pip install --python .venv/bin/python pytest pyyaml python-docx python-pptx pypandoc-binary structlog opentelemetry-api opentelemetry-sdk psutil pytest-asyncio pytest-timeout weasyprint nbformat markdownify chardet openpyxl lxml boto3 azure-storage-blob moto yake fastmcp
+        run: uv pip install --python .venv/bin/python pytest pyyaml python-docx python-pptx pypandoc-binary structlog opentelemetry-api opentelemetry-sdk psutil pytest-asyncio pytest-timeout weasyprint nbformat markdownify chardet openpyxl lxml boto3 azure-storage-blob moto yake
+
+      # fastmcp must come from uv.lock: a bare `fastmcp` now resolves to 4.x, which pulls
+      # mcp 2.x and breaks mcp 1.x consumers (mcp.server.request_state -> ModuleNotFoundError
+      # in the usability verifier's MCP group).
+      - name: Install fastmcp pinned to uv.lock (do not install it unpinned)
+        run: |
+          FASTMCP_PIN=$(python -c "import tomllib; d=tomllib.load(open('uv.lock','rb')); print(next(p['version'] for p in d['package'] if p['name']=='fastmcp'))")
+          uv pip install --python .venv/bin/python "fastmcp==$FASTMCP_PIN"
 
       - name: Create .venv_ol symlink for legacy paths
         run: ln -s .venv .venv_ol

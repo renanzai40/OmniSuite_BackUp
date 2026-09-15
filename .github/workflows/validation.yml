@@ -92,6 +92,15 @@ jobs:
       - name: Install test deps (pytest + docx/pptx/pandoc + weasyprint for real PDF render)
         run: uv pip install --python .venv/bin/python pytest pyyaml python-docx python-pptx pypandoc-binary structlog opentelemetry-api opentelemetry-sdk psutil pytest-asyncio pytest-timeout weasyprint nbformat markdownify chardet openpyxl lxml yake
 
+      # Gate 2 (coverage_audit -> dispatch.run_transport_parity) imports fastmcp.Client,
+      # but fastmcp only arrives through a submodule's optional extra, which `uv sync`
+      # does not install. Pin it to the uv.lock version: installing it unpinned resolves
+      # to fastmcp 4.x, which in turn pulls mcp 2.x (violates the mcp<2 contract).
+      - name: Install fastmcp pinned to uv.lock (Gate 2 transport parity)
+        run: |
+          FASTMCP_PIN=$(python -c "import tomllib; d=tomllib.load(open('uv.lock','rb')); print(next(p['version'] for p in d['package'] if p['name']=='fastmcp'))")
+          uv pip install --python .venv/bin/python "fastmcp==$FASTMCP_PIN"
+
       - name: Create .venv_ol symlink for legacy paths
         run: ln -s .venv .venv_ol
 
@@ -206,6 +215,15 @@ jobs:
 
       - name: Install test deps (pytest + docx/pptx/pandoc + weasyprint for real PDF render)
         run: uv pip install --python .venv/bin/python pytest pyyaml python-docx python-pptx pypandoc-binary structlog opentelemetry-api opentelemetry-sdk psutil pytest-asyncio pytest-timeout weasyprint nbformat markdownify chardet openpyxl lxml yake
+
+      # Gate 2 (coverage_audit -> dispatch.run_transport_parity) imports fastmcp.Client,
+      # but fastmcp only arrives through a submodule's optional extra, which `uv sync`
+      # does not install. Pin it to the uv.lock version: installing it unpinned resolves
+      # to fastmcp 4.x, which in turn pulls mcp 2.x (violates the mcp<2 contract).
+      - name: Install fastmcp pinned to uv.lock (Gate 2 transport parity)
+        run: |
+          FASTMCP_PIN=$(python -c "import tomllib; d=tomllib.load(open('uv.lock','rb')); print(next(p['version'] for p in d['package'] if p['name']=='fastmcp'))")
+          uv pip install --python .venv/bin/python "fastmcp==$FASTMCP_PIN"
 
       - name: Create .venv_ol symlink for legacy paths
         run: ln -s .venv .venv_ol
