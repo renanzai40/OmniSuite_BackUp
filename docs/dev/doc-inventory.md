@@ -13,16 +13,16 @@ python3 scripts/doc_inventory.py --check  # source-truth consistency (exit 0 = c
 
 | Metric | Value |
 |--------|-------|
-| Total files | 46 |
-| Total lines | 25248 |
-| Active files | 38 |
+| Total files | 47 |
+| Total lines | 26621 |
+| Active files | 39 |
 | Archived files | 8 |
 | Category — archive | 8 files / 14157 lines |
 | Category — expectations | 4 files / 2514 lines |
 | Category — security | 2 files / 1204 lines |
 | Category — docs/observability | 1 files / 136 lines |
-| Category — docs/dev | 18 files / 2728 lines |
-| Category — docs/root | 13 files / 4509 lines |
+| Category — docs/dev | 18 files / 2921 lines |
+| Category — docs/root | 14 files / 5689 lines |
 
 ## Inventory
 
@@ -40,7 +40,7 @@ python3 scripts/doc_inventory.py --check  # source-truth consistency (exit 0 = c
 | `RELEASE_NOTES.md` | 23 | docs/root | active | — |
 | `SECURITY.md` | 250 | security | active | — |
 | `SECURITY_AUDIT.md` | 954 | security | active | — |
-| `SLA.md` | 127 | docs/root | active | — |
+| `SLA.md` | 128 | docs/root | active | — |
 | `SUITE_EXPECTATIONS.md` | 892 | expectations | active | — |
 | `adr/0001-cli-framework-defer-unification.md` | 70 | docs/dev | active | — |
 | `adr/0002-three-independent-modules.md` | 56 | docs/dev | active | — |
@@ -48,10 +48,10 @@ python3 scripts/doc_inventory.py --check  # source-truth consistency (exit 0 = c
 | `adr/0004-manifest-skeleton-handoff.md` | 57 | docs/dev | active | — |
 | `adr/0005-pdf-xliff-blocked.md` | 54 | docs/dev | active | — |
 | `adr/0006-fake-llm-hermetic-seam.md` | 53 | docs/dev | active | — |
-| `adr/0007-path-security-convergence.md` | 170 | docs/dev | active | — |
+| `adr/0007-path-security-convergence.md` | 297 | docs/dev | active | — |
 | `adr/README.md` | 40 | docs/dev | active | — |
 | `adr/TEMPLATE.md` | 36 | docs/dev | active | — |
-| `agent-pipeline-guide.md` | 344 | docs/root | active | — |
+| `agent-pipeline-guide.md` | 346 | docs/root | active | — |
 | `agent-tester-validation-guide.md` | 1496 | docs/root | active | — |
 | `archive/OL_VALIDATION_MASTER_PLAN.md` | 4489 | archive | archived | — |
 | `archive/OPP_VALIDATION_MASTER_PLAN.md` | 3106 | archive | archived | — |
@@ -67,10 +67,11 @@ python3 scripts/doc_inventory.py --check  # source-truth consistency (exit 0 = c
 | `dev/per-repo-validation-delivery.md` | 187 | docs/dev | active | — |
 | `dev/pypi-release-checklist.md` | 91 | docs/dev | active | — |
 | `dev/validation-director-loop.md` | 279 | docs/dev | active | — |
-| `dev/validation-loop-log.md` | 162 | docs/dev | active | — |
+| `dev/validation-loop-log.md` | 228 | docs/dev | active | — |
+| `handoff-2026-09-18.md` | 144 | docs/root | active | — |
 | `methodology/README.md` | 44 | docs/dev | active | — |
 | `methodology/agent-oriented-design-mindset.md` | 625 | docs/dev | active | — |
 | `observability/README.md` | 136 | docs/observability | active | — |
 | `project-evaluation-pain-points-2026-09-06.md` | 311 | docs/root | active | — |
-| `project-health-report-2026-09-17.md` | 718 | docs/root | active | — |
+| `project-health-report-2026-09-17.md` | 1751 | docs/root | active | — |
 | `七阶段AI开发流程-用CodingAgent交付成品的方法论.md` | 230 | docs/root | active | — |
