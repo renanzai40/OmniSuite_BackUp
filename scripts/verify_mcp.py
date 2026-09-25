@@ -22,6 +22,7 @@ ENV = os.environ.copy()
 ENV.update({
     "OMNI_TEST_FAKE_LLM": "1",
     "OMNI_TEST_FAKE_PANDOC": "1",
+    "ARK_API_KEY": "sk-dummy",
     "ZHIPU_API_KEY": "sk-dummy",
     "AGNES_API_KEY": "sk-dummy",
     "NVIDIA_NIM_API_KEY": "nvapi-dummy",

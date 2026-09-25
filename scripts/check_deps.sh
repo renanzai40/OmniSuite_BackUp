@@ -73,13 +73,13 @@ if [ "${OMNI_TEST_FAKE_LLM:-}" = "1" ]; then
     ok "LLM API key: skipped (OMNI_TEST_FAKE_LLM=1)"
 else
     KEYS_SET=0
-    for key_name in ZHIPU_API_KEY AGNES_API_KEY NVIDIA_NIM_API_KEY OPENCODE_GO_KEY; do
+    for key_name in ARK_API_KEY ZHIPU_API_KEY NVIDIA_NIM_API_KEY; do
         if [ -n "${!key_name:-}" ]; then
             KEYS_SET=$((KEYS_SET + 1))
         fi
     done
     if [ "$KEYS_SET" -eq 0 ]; then
-        err "No LLM API keys found. Set at least one of: ZHIPU_API_KEY, AGNES_API_KEY, NVIDIA_NIM_API_KEY, OPENCODE_GO_KEY"
+        err "No LLM API keys found. Set at least one of: ARK_API_KEY, ZHIPU_API_KEY, NVIDIA_NIM_API_KEY"
         err "  → Or set OMNI_TEST_FAKE_LLM=1 for testing."
         FAILURES=$((FAILURES + 1))
     else

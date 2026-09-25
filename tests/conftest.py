@@ -50,6 +50,7 @@ for _var in ("ORF_MCP_ALLOWED_DIRS", "OPP_MCP_ALLOWED_DIRS", "OL_MCP_ALLOWED_DIR
 # validators only check that the env vars are non-empty. Without these, OL
 # config validation aborts at import time and the OL MCP server fails to start.
 _DUMMY_API_KEYS = {
+    "ARK_API_KEY": "sk-dummy",
     "ZHIPU_API_KEY": "sk-dummy",
     "AGNES_API_KEY": "sk-dummy",
     "NVIDIA_NIM_API_KEY": "nvapi-dummy",
