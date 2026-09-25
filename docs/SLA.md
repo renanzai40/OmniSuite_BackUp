@@ -39,8 +39,9 @@ significantly slower and are excluded from this SLA until Phase 3.2 is complete.
 
 **Note**: real LLM latency is dominated by network round-trips to the LLM
 provider; FAKE_LLM runs finish in milliseconds. Real-world OL latency is
-governed by `OMNI_OPENAI_API_KEY` provider tier, prompt size, and rate limits.
-A separate SLA for real LLM is deferred to Phase 3.2.
+governed by the OL model pool's provider tier (`config/default.yaml`:
+`ARK_API_KEY` / `ZHIPU_API_KEY` / `NVIDIA_NIM_API_KEY`), prompt size, and
+rate limits. A separate SLA for real LLM is deferred to Phase 3.2.
 
 ### 2.3 ORF — MD backfill (FAKE_PANDOC)
 

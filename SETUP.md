@@ -1,21 +1,28 @@
-# Phase 1 Setup — Real LLM Integration Tests
+# Setup — Real LLM Integration Tests
 
 > **Prerequisite:** Python >= 3.13. All Omni Suite components require Python 3.13+.
 > Verify with `python3 --version` before proceeding.
 
-> **Goal:** Wire your real MiniMax + Baidu Qianfan API keys so the nightly `pytest -m nightly` tests can hit real LLMs (instead of the fake LLM that runs in CI).
+> **Goal:** Wire your real LLM provider keys so the nightly `pytest -m nightly`
+> tests can hit real LLMs (instead of the fake LLM that runs in CI).
 >
 > **Time:** ~10 minutes.
 >
 > **What you do:** 3 steps. Copy-paste ready.
 >
-> **Prereq:** You have active API keys for:
-> - **MiniMax** (provider: `minimax`) — https://api.minimaxi.com/
-> - **Baidu Qianfan** (provider: `baidu`) — https://qianfan.baidubce.com/
+> **Prereq:** You have active API keys for the canonical OL model pool:
+> - **Volcengine Ark** (`ARK_API_KEY`) — https://console.volcengine.com/ark/
+> - **Zhipu BigModel** (`ZHIPU_API_KEY`) — https://open.bigmodel.cn/
+> - **NVIDIA NIM** (`NVIDIA_NIM_API_KEY`) — https://build.nvidia.com/
 >
-> If you don't have these, get them first. Tests will be skipped (not failed) without them.
+> If you don't have these, get them first. Tests will be skipped (not failed)
+> without them.
 >
-> **Venv prereq (one-time):** The suite ships with a single consolidated venv at `.venv_ol/` that contains all three components (OPP, OL, ORF) installed in editable mode. An older `.venv/` is still present on disk but **DEPRECATED** — see `.venv/DEPRECATED.md` for the deprecation notice. All commands below use `.venv_ol/bin/python`.
+> **Venv prereq (one-time):** The suite ships with a single consolidated venv at
+> `.venv_ol/` that contains all three components (OPP, OL, ORF) installed in
+> editable mode. An older `.venv/` may still be present on disk but is
+> **DEPRECATED** — see `.venv/DEPRECATED.md`. All commands below use
+> `.venv_ol/bin/python`.
 >
 > If you ever need to rebuild the venv from scratch, run:
 > ```bash
@@ -28,139 +35,105 @@
 
 ## Step 1 — Fill your API keys
 
-Open: `Omni_Localizer/.env`
+The canonical model pool is defined in
+`Omni_Localizer/config/default.yaml`: **ark-code-latest** (Volcengine Ark,
+priority 1) → **glm-4.7-flash** (Zhipu, priority 2) →
+**minimaxai/minimax-m3** (NVIDIA NIM, priority 3), shared by every role.
 
-Replace these two lines:
+Copy the template and fill in the three keys:
 
-```env
-MINIMAX_API_KEY=
-BAIDU_API_KEY=
+```bash
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"
+cp .env.example Omni_Localizer/.env
 ```
 
-With your real keys (keep the variable names, no quotes, no spaces around `=`):
+Open `Omni_Localizer/.env` and replace the placeholders (keep the variable
+names, no quotes, no spaces around `=`):
 
 ```env
-MINIMAX_API_KEY=eyJhbGciOi...paste-your-real-minimax-key-here
-BAIDU_API_KEY=bce-v3/ALTpa...paste-your-real-baidu-key-here
+ARK_API_KEY=your-real-ark-key
+ZHIPU_API_KEY=your-real-zhipu-key
+NVIDIA_NIM_API_KEY=<your-nvidia-nim-api-key>
 ```
 
-Leave the `*_BASE_URL` lines as-is (they default to the correct endpoints).
+**Note on location:** the nightly E2E fixture and the `.github/workflows`
+nightly jobs read `Omni_Localizer/.env`. The OL CLI also auto-discovers a
+`.env` in the current directory or any parent directory (and honours
+`OL_DOTENV`), so a root `.env` works when you run commands from the suite root.
 
-**Resulting file should look like:**
-
-```env
-# ===== MiniMax (provider: "minimax") =====
-MINIMAX_API_KEY=eyJhbGciOi...your-real-key
-MINIMAX_BASE_URL=https://api.minimaxi.com/v1
-
-# ===== Baidu Qianfan (provider: "baidu") =====
-BAIDU_API_KEY=bce-v3/ALTpa...your-real-key
-BAIDU_BASE_URL=https://qianfan.baidubce.com/v2
-```
-
-> **Safety:** `Omni_Localizer/.env` is git-ignored (line 59 of `Omni_Localizer/.gitignore` and line 8 of the root `.gitignore`). You will never accidentally commit it.
+> **Safety:** both `.env` locations are git-ignored (root `.gitignore` and
+> `Omni_Localizer/.gitignore`). You will never accidentally commit them.
 
 ---
 
-## Step 2 — Wire the 6 model entries into a NEW gitignored config file
+## Step 2 — Configure the model pool
 
-**Why a new file?** `Omni_Localizer/config/default.yaml` is **tracked in git** (`git ls-files config/default.yaml` confirms it). We must NOT modify it — keep it as the public template. Instead, we create a new gitignored override at `Omni_Localizer/config/local.yaml` and pass it via `--config`.
-
-> **Already done for you:**
-> - `Omni_Localizer/.gitignore` line 66 now ignores `config/local.yaml`, `config/local.*.yaml`, `config/secret.yaml`, and `config/production.yaml`. So any local override you create will never be committed.
-> - `Omni_Localizer/config/local.yaml` already exists with the real config (model names: `MiniMax-M3` + `ernie-4.5-turbo-32k`, project_id: `ol-local-real-llm`, `${VAR}` env refs).
-> - `Omni_Localizer/config/default.yaml` has been **reverted to its tracked template** (openai/anthropic placeholders). Do not modify it.
-
-### 2a. Verify the local.yaml is in place and gitignored
+`Omni_Localizer/config/default.yaml` is the **tracked canonical template** and
+already contains the 3-provider unified pool with `${ENV_VAR}` references; it is
+safe to use directly. For a machine-local override, copy it to the gitignored
+`config/local.yaml` and edit that instead:
 
 ```bash
-cd /mnt/d/贯维/Omni_Suite/Omni_Localizer
-ls -la config/local.yaml                            # should exist
-git check-ignore -v config/local.yaml               # should print .gitignore:66:config/local.yaml    config/local.yaml
-git status --short config/                          # should print nothing (no M/D/?? for config/*)
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"/Omni_Localizer
+cp config/default.yaml config/local.yaml
+git check-ignore -v config/local.yaml   # should print config/local.yaml
 ```
 
-If `git status` shows `M config/default.yaml`, that means someone modified the tracked file — re-revert with `git checkout -- config/default.yaml`. The real config is safe in `local.yaml`.
-
-### 2b. (Reference only — the YAML already in `local.yaml`)
-
-For future maintainers, here's what should be in `local.yaml`:
+The pool shape (all four roles — translation / judging / restoration /
+profiling — carry the same three priorities):
 
 ```yaml
-project_id: "ol-local-real-llm"
-source_lang: "en"
-target_lang: "zh"
-glossary_path: null
 llm_pool:
   translation:
-    - provider: "minimax"
-      model: "MiniMax-M3"
+    - provider: "openai"
+      model: "ark-code-latest"        # Volcengine Ark — priority-1 primary
       priority: 1
       role: "translation"
-      api_key: "${MINIMAX_API_KEY}"
-      base_url: "${MINIMAX_BASE_URL}"
-      timeout: 60.0
-    - provider: "baidu"
-      model: "ernie-4.5-turbo-32k"
+      api_key: "${ARK_API_KEY}"
+      base_url: "https://ark.cn-beijing.volces.com/api/coding/v3"
+      timeout: 120.0
+    - provider: "openai"
+      model: "glm-4.7-flash"          # Zhipu — priority-2 fallback
       priority: 2
       role: "translation"
-      api_key: "${BAIDU_API_KEY}"
-      base_url: "${BAIDU_BASE_URL}"
-      timeout: 60.0
-  judging:
-    - provider: "baidu"
-      model: "ernie-4.5-turbo-32k"
-      priority: 1
-      role: "judging"
-      api_key: "${BAIDU_API_KEY}"
-      base_url: "${BAIDU_BASE_URL}"
-      timeout: 60.0
-    - provider: "minimax"
-      model: "MiniMax-M3"
-      priority: 2
-      role: "judging"
-      api_key: "${MINIMAX_API_KEY}"
-      base_url: "${MINIMAX_BASE_URL}"
-      timeout: 60.0
-  restoration:
-    - provider: "minimax"
-      model: "MiniMax-M3"
-      priority: 1
-      role: "restoration"
-      api_key: "${MINIMAX_API_KEY}"
-      base_url: "${MINIMAX_BASE_URL}"
-      timeout: 60.0
-    - provider: "baidu"
-      model: "ernie-4.5-turbo-32k"
-      priority: 2
-      role: "restoration"
-      api_key: "${BAIDU_API_KEY}"
-      base_url: "${BAIDU_BASE_URL}"
-      timeout: 60.0
+      api_key: "${ZHIPU_API_KEY}"
+      base_url: "https://open.bigmodel.cn/api/paas/v4"
+      timeout: 120.0
+    - provider: "openai"
+      model: "minimaxai/minimax-m3"   # NVIDIA NIM — priority-3 fallback
+      priority: 3
+      role: "translation"
+      api_key: "${NVIDIA_NIM_API_KEY}"
+      base_url: "https://integrate.api.nvidia.com/v1"
+      timeout: 120.0
+  # judging: / restoration: / profiling: mirror the same three priorities.
 ```
 
 **Why this shape:**
-- Schema requires **≥ 2 models per role** (`LLMPoolConfig.check_min_models_per_role` in `Omni_Localizer/src/ol_config/schema.py:48-57`).
-- `api_key` and `base_url` use `${VAR}` syntax — the loader (`Omni_Localizer/src/ol_config/loader.py:14-21`) auto-resolves from `.env` at config load time, and the schema validator (`schema.py:17-23`) fails fast if the env var is missing.
-- `timeout: 60.0` matches the schema default.
-- `project_id` is `ol-local-real-llm` (NOT the template's `ol-phase0-test`) so logs distinguish your real-LLM runs from CI's fake runs.
+- Schema requires **≥ 2 models per role** (`LLMPoolConfig.check_min_models_per_role` in `Omni_Localizer/src/ol_config/schema.py`).
+- `api_key` and `base_url` use `${VAR}` syntax — the loader (`Omni_Localizer/src/ol_config/loader.py`) auto-resolves from the environment at config-load time, and the schema validator (`schema.py:_check_env_vars`) warns if the env var is missing.
+- `provider: "openai"` selects the OpenAI-compatible client for all three endpoints; litellm falls back along priority (`priority 1` → `2` → `3`) automatically.
 
-> **Backup models:** If `priority 1` fails, litellm falls back to `priority 2` automatically (`router.py:51-57`, `num_retries=2`).
+Validate the config with the doctor command:
+
+```bash
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"
+.venv_ol/bin/ol doctor -c Omni_Localizer/config/local.yaml
+# (or -c Omni_Localizer/config/default.yaml)
+```
 
 ---
 
 ## Step 3 — Verify the real LLM works
 
-Run these commands from the repo root. The CLI auto-loads `.env` via `_load_env_for_cli()` (`Omni_Localizer/src/ol_cli.py:321`), so you do NOT need to `source` anything.
-
-> **Note:** Both `translate-md` and `translate-xliff` require:
-> - `--output-dir` (or `-o`) — the CLI exits with code 1 if missing.
-> - `--config` (or `-c`) — points to your gitignored `local.yaml` (NOT the tracked `default.yaml`).
+Run these commands from the repo root. Export the keys into your shell (or use
+the `.env` auto-discovery described above), and point `--config` at the pool you
+validated in Step 2.
 
 ### 3a. Quick smoke test (CLI, MD path)
 
 ```bash
-cd /mnt/d/贯维/Omni_Suite
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"
 .venv_ol/bin/python -m ol_cli translate-md \
     Omni_Localizer/tests/fixtures/sample.md \
     -c Omni_Localizer/config/local.yaml \
@@ -174,12 +147,12 @@ Expected output (last line):
 Translated: sample.md -> /tmp/ol-smoke/sample.md (en -> zh)
 ```
 
-Should finish in **< 30 seconds** (real network round-trip to MiniMax/Baidu). You should also see `Using config: ol-local-real-llm (en -> zh)` printed before the translate line (proof the local.yaml was loaded, not the tracked default).
+Should finish in **< 30 seconds** (real network round-trip to Ark/Zhipu/NVIDIA).
 
 ### 3b. Quick smoke test (CLI, XLIFF path)
 
 ```bash
-cd /mnt/d/贯维/Omni_Suite
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"
 .venv_ol/bin/python -m ol_cli translate-xliff \
     Omni_Localizer/tests/fixtures/sample-xliff12.xlf \
     -c Omni_Localizer/config/local.yaml \
@@ -201,7 +174,7 @@ The full Haier DOCX (24 images, 9 paragraphs) is the committed fixture `scenario
 
 ```bash
 # (Optional) Convert DOCX → XLIFF via OPP
-cd /mnt/d/贯维/Omni_Suite
+cd "${OMNI_ROOT:-/mnt/d/贯维/Omni_Suite}"
 .venv_ol/bin/python -m opp_cli extract "scenarios/_fixtures/haier_ch2_zh.docx" \
     -o /tmp/ol-haier-xliff
 ```
@@ -216,7 +189,7 @@ Then translate the XLIFF:
     -s en -t zh
 ```
 
-Expected: translated XLIFF with all 9 paragraphs + 24 image placeholders preserved. This is the smoke test the new nightly suite exercises end-to-end (`tests/test_e2e_real_llm.py`).
+Expected: translated XLIFF with all 9 paragraphs + 24 image placeholders preserved. This is the smoke test the nightly suite exercises end-to-end (`tests/test_e2e_real_llm.py`).
 
 ---
 
@@ -224,36 +197,31 @@ Expected: translated XLIFF with all 9 paragraphs + 24 image placeholders preserv
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `Environment variable 'MINIMAX_API_KEY' not set` | `.env` not loaded | Check Step 1 — make sure the line has no leading space, no quote, the `=` is direct. |
-| `AuthenticationError: Invalid API key` (401/403) | Key typo / wrong project | Re-paste key from provider console. For Baidu, copy the full `bce-v3/ALTpa...` string verbatim. |
-| `Model not found` (404 from MiniMax) | Wrong model name | `MiniMax-M3` is the current default; if MiniMax rotated, check https://api.minimaxi.com/ for the current text model id. |
-| `RateLimitError` (429) | Hit free-tier cap | Wait 60s and re-run, or upgrade tier. |
-| Test `SKIPPIPPED: no MINIMAX/BAIDU key` | `.env` not visible to pytest | Confirm the file is at `Omni_Localizer/.env` (suite root, not test cwd). The `use_real_llm` fixture (`tests/test_e2e_real_llm.py:48-63`) reads it from there via `Path(__file__).resolve().parents[1] / "Omni_Localizer" / ".env"`. |
+| `Environment variable 'ARK_API_KEY' not set` | `.env` not loaded | Check Step 1 — make sure the line has no leading space, no quote, the `=` is direct. |
+| `AuthenticationError: Invalid API key` (401/403) | Key typo / wrong project | Re-paste the key from the provider console. For NVIDIA, copy the full `nvapi-...` string verbatim. |
+| `Model not found` (404) | Wrong model name | The canonical ids are `ark-code-latest`, `glm-4.7-flash`, `minimaxai/minimax-m3`; if a provider rotates, update `config/local.yaml`. |
+| `RateLimitError` (429) | Hit free-tier cap | Wait 60s and re-run; the Router retries down the priority chain. |
+| Test `SKIPPED: no ... key` | `.env` not visible to pytest | Confirm the file is at `Omni_Localizer/.env`. The `use_real_llm` fixture (`tests/test_e2e_real_llm.py`) reads it from there via `Path(__file__).resolve().parents[1] / "Omni_Localizer" / ".env"`. |
 | `Error: --output-dir is required` | CLI requires `-o` flag | Add `-o /tmp/ol-smoke` (or any writable dir) to every `translate-md` / `translate-xliff` command. |
-| CLI is using `openai`/`anthropic` even though I set up `local.yaml` | Forgot `--config` flag, so it fell back to tracked `default.yaml` | Add `-c Omni_Localizer/config/local.yaml` to every command. Check the line `Using config: ol-local-real-llm` appears in the output. |
+| CLI uses the wrong pool | Forgot `--config` flag | Add `-c Omni_Localizer/config/local.yaml` to every command. |
 
 ---
 
 ## Confirmation checklist (tick all before saying "done")
 
-- [ ] `Omni_Localizer/.env` has real `MINIMAX_API_KEY` and `BAIDU_API_KEY` values (no quotes, no spaces).
-- [ ] `Omni_Localizer/config/local.yaml` exists with 6 model entries (2 per role, MiniMax + Baidu, `${VAR}` env refs).
-- [ ] `Omni_Localizer/.gitignore` line 66+ ignores `config/local.yaml` (verified with `git check-ignore -v config/local.yaml`).
-- [ ] `Omni_Localizer/config/default.yaml` is UNCHANGED (still the tracked template, no real config in it). Run `git diff Omni_Localizer/config/default.yaml` — should be empty.
-- [ ] Step 3a prints `Using config: ol-local-real-llm ...` then `Translated: sample.md -> ...`.
+- [ ] `Omni_Localizer/.env` has real `ARK_API_KEY`, `ZHIPU_API_KEY`, and `NVIDIA_NIM_API_KEY` values (no quotes, no spaces).
+- [ ] `Omni_Localizer/config/local.yaml` exists (a copy of the canonical `default.yaml`) with the 3-provider pool and `${VAR}` env refs.
+- [ ] `Omni_Localizer/.gitignore` ignores `config/local.yaml` (verified with `git check-ignore -v config/local.yaml`).
+- [ ] `.venv_ol/bin/ol doctor -c Omni_Localizer/config/local.yaml` passes its 5 checks.
+- [ ] Step 3a prints `Translated: sample.md -> ...`.
 - [ ] Step 3b prints `Translated: sample-xliff12.xlf -> ...`.
-- [ ] `git status` in `Omni_Localizer/` shows `local.yaml` **NOT** in the untracked list, and `.env` **NOT** in the modified list.
-- [ ] You can read this checklist out loud to me and say "Phase 1 done".
+- [ ] `git status` in `Omni_Localizer/` does NOT list `local.yaml` and does NOT show `.env` as modified.
 
 ---
 
 ## What's next (you don't do this; I do)
 
-After Phase 1, I run Phases 2-7 (~7-8 hours):
-- **Phase 2-3:** OPP floating-image fix + ORF `wp:anchor` injection (24/24 strict visual positioning).
-- **Phase 4:** OL LQA auto-invoke in main pipeline (opt-in via `enable_lqa: bool`).
-- **Phase 5:** MD path "DOCX + images separate" mode (opt-in).
-- **Phase 6:** The 3 nightly real-LLM tests in `tests/test_e2e_real_llm.py`.
-- **Phase 7:** Full CI green + nightly locally green verification.
-
-Trigger: tell me "Phase 1 done" and paste the Step 3a output, and I start.
+After setup, the nightly real-LLM runs are:
+- **`make e2e`** — 19 tests in `tests/test_e2e_real_llm.py` (skips gracefully without keys).
+- **`.github/workflows/validation.yml` nightly** — full validation library against the canonical pool secrets (`ARK_API_KEY` / `ZHIPU_API_KEY` / `NVIDIA_NIM_API_KEY`); keyed scenarios report `unconfigured` when a secret is absent, never a fake green.
+- **`.github/workflows/e2e-tests.yml` nightly-llm** — real-LLM E2E matrix.

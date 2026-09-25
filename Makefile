@@ -151,13 +151,14 @@ smoke:
 # developers can run `make e2e` without polluting CI.
 # ---------------------------------------------------------------------------
 e2e:
-	@if [ -z "$$MINIMAX_API_KEY" ] && [ -z "$$BAIDU_API_KEY" ]; then \
+	@if [ -z "$$ARK_API_KEY" ] && [ -z "$$ZHIPU_API_KEY" ] && [ -z "$$NVIDIA_NIM_API_KEY" ]; then \
 		echo ""; \
 		echo "  No real LLM API keys detected."; \
 		echo ""; \
 		echo "  E2E tests require at least one of:"; \
-		echo "    - MINIMAX_API_KEY (MiniMax M2.7)"; \
-		echo "    - BAIDU_API_KEY   (Baidu ERNIE)"; \
+		echo "    - ARK_API_KEY        (Volcengine Ark, priority 1)"; \
+		echo "    - ZHIPU_API_KEY      (Zhipu BigModel, priority 2)"; \
+		echo "    - NVIDIA_NIM_API_KEY (NVIDIA NIM, priority 3)"; \
 		echo ""; \
 		echo "  Set them in Omni_Localizer/.env or export in your shell."; \
 		echo "  Run 'make e2e-help' for detailed setup instructions."; \
@@ -177,9 +178,11 @@ e2e-help:
 	@echo ""
 	@echo "Prerequisites:"
 	@echo "  1. Python 3.13+ installed (make doctor to verify)"
-	@echo "  2. At least one of these API keys in the environment:"
-	@echo "       MINIMAX_API_KEY    (MiniMax M2.7)"
-	@echo "       BAIDU_API_KEY      (Baidu ERNIE)"
+	@echo "  2. At least one of these API keys in the environment"
+	@echo "     (canonical OL model pool, see CONTRACT.md):"
+	@echo "       ARK_API_KEY        (Volcengine Ark, ark-code-latest)"
+	@echo "       ZHIPU_API_KEY      (Zhipu BigModel, glm-4.7-flash)"
+	@echo "       NVIDIA_NIM_API_KEY (NVIDIA NIM, minimaxai/minimax-m3)"
 	@echo ""
 	@echo "Setup:"
 	@echo "  1. Copy Omni_Localizer/.env.example to Omni_Localizer/.env (if needed)"

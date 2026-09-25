@@ -23,8 +23,8 @@ Already done in this session, but verify before running:
 
 ```bash
 # 1. .env has real API keys
-grep -E "^(MINIMAX_API_KEY|BAIDU_API_KEY)=" Omni_Localizer/.env | sed 's/=.*$/=<SET>/'
-# Expected: two non-empty lines
+grep -E "^(ARK_API_KEY|ZHIPU_API_KEY|NVIDIA_NIM_API_KEY)=" Omni_Localizer/.env | sed 's/=.*$/=<SET>/'
+# Expected: three non-empty lines
 
 # 2. local.yaml exists and is gitignored
 ls -la Omni_Localizer/config/local.yaml
@@ -175,7 +175,7 @@ tests/test_e2e_real_llm.py::TestE2ERealLLMTranslationQuality::test_lqa_judge_4_d
 ======================== 3 passed in ~400s (0:06:40) =========================
 ```
 
-You'll see lots of `litellm.acompletion(...) 200 OK` lines from real LLM calls (MiniMax-M3 + ernie-4.5-turbo-32k). That's expected — the tests are exercising the real APIs.
+You'll see lots of `litellm.acompletion(...) 200 OK` lines from real LLM calls (ark-code-latest + glm-4.7-flash + minimaxai/minimax-m3). That's expected — the tests are exercising the real APIs.
 
 To reduce noise, add `-q` for quieter output:
 
@@ -207,7 +207,7 @@ ls -t Omni_Localizer/logs/ol-*.log | head -1 | xargs tail -50
 |---|---|---|
 | `RuntimeError: There is no current event loop` | `asyncio.gather` called from sync context | Already fixed — `TestE2ERealLLMTranslationQuality` wraps gather in `async def _judge_all()` |
 | `lxml.etree.XMLSyntaxError: xmlParseEntityRef: no name` | LLM wrote unescaped `&` in XLIFF target text | Already fixed — `xliff_bus.py:_escape_xml_entities()` runs before `restore_tags` |
-| `litellm.BadRequestError: LLM Provider NOT provided ... You passed model=baidu/...` | `baidu` is not a litellm provider | Already fixed — use `provider: "openai"` with Baidu's OpenAI-compatible V2 base_url (done in `local.yaml`) |
+| `litellm.BadRequestError: LLM Provider NOT provided ...` | A non-OpenAI-compatible provider name in the pool | Already fixed — the canonical pool uses `provider: "openai"` with each provider's OpenAI-compatible base_url (`config/default.yaml`) |
 | `Expected 7 unique image files in output, got N` | ORF dropped/added images | Check ORF log; verify the 7 unique files (image1.jpeg + image2.png + image8-12.png) are all in the output DOCX |
 | `ValueError: Attempt to use ZIP archive that was already closed` | `with zipfile.ZipFile(...) as zf:` block too narrow | Already fixed — the block was extended in `extract_image_positions` |
 | Test takes >10 min | LLM API slow or rate-limited | Each LLM call has 60s timeout. Check `litellm` warnings in stderr. If rate-limited, wait 60s and re-run |
@@ -226,7 +226,7 @@ ls -t Omni_Localizer/logs/ol-*.log | head -1 | xargs tail -50
 @pytest.mark.nightly
 def test_your_new_real_llm_test(
     haier_real_docx_path: Path,  # the 24-image Haier DOCX
-    use_real_llm,                # auto-skips if MINIMAX/BAIDU key missing
+    use_real_llm,                # auto-skips if no canonical provider key is set
     tmp_path: Path,              # per-test scratch dir
 ):
     """Describe what this test verifies."""
@@ -324,7 +324,7 @@ Last verified on 2026-06-11. Test counts grow as new tests are added; run `pytes
 The 18-chain pipeline test (`tests/test_e2e_pipeline_full.py`, 3 inputs × 3 outputs × 2 transports) was created to exercise the full matrix. Status:
 
 - **`OMNI_TEST_FAKE_LLM=1` (hermetic)**: The T17 fix extended the fake-LLM seam to stub `span_aligner`, resolving the original HuggingFace model loading issue. However, some chains may still time out (≥60s) due to slow fixture setup or MCP server dependencies.
-- **Real API keys** (`nightly` path): The 18 chains work end-to-end when real MiniMax/Baidu keys are available.
+- **Real API keys** (`nightly` path): The 18 chains work end-to-end when real canonical provider keys (ARK / ZHIPU / NVIDIA) are available.
 
 Known Hermetic CI gaps:
 - `tests/test_e2e_ol_mcp.py::TestOLMCP::test_translate_md_text_preserves_markdown_structure` remains **SKIPPED** — the `OMNI_TEST_FAKE_LLM` seam doesn't fully cover the MCP `translate_md_text` tool's internal async pipeline.

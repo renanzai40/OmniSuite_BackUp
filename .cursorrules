@@ -35,9 +35,9 @@ Configure in your tool's MCP settings. **Note:** naming is not uniform —
 `opp-mcp-server` and `orf-mcp-server` use the `-server` suffix, but `ol-mcp`
 does NOT.
 
-- `opp-mcp-server` — **7 tools**: `extract_document`, `batch_extract`, `detect_format_tool`, `generate_markdown`, `generate_xliff`, `save_skeleton`, `ping`
-- `ol-mcp` (no `-server` suffix) — **8 tools**: `translate_md_text`, `translate_xliff`, `judge_text`, `load_glossary`, `get_relevant_terms`, `search_tm`, `batch_translate_texts`, `ping`
-- `orf-mcp-server` — **6 tools** (not 7): `apply_md`, `apply_xliff`, `batch_convert`, `detect_format`, `info`, `ping`
+- `opp-mcp-server` — **9 tools**: `extract_document`, `batch_extract`, `detect_format_tool`, `generate_xliff`, `generate_markdown`, `save_skeleton`, `validate_xliff`, `ping`, `get_capabilities`
+- `ol-mcp` (no `-server` suffix) — **21 tools**: `translate_md_text`, `translate_xliff`, `translate_file`, `batch_translate_texts`, `judge_text`, `load_glossary`, `get_relevant_terms`, `search_tm`, `add_tm_entries`, `verify_terms`, `extract_terms`, `shield_md_text`, `unshield_md_text`, `disambiguate`, `profile_doc`, `extract_warnings`, `generate_report`, `inspect_config`, `get_translation_status`, `ping`, `get_capabilities`
+- `orf-mcp-server` — **7 tools**: `apply_md`, `apply_xliff`, `batch_convert`, `detect_format`, `info`, `ping`, `get_capabilities`
 
 ## MCP Path Allowlists
 
@@ -85,7 +85,7 @@ make clean           # Clean artifacts
 
 ## How to validate
 
-Run the agent-testing validation engine (83 scenarios; no mocks, no
+Run the agent-testing validation engine (119 scenarios; no mocks, no
 FAKE_LLM as evidence — tier-1 runs are hermetic). All commands from the
 suite root with `.venv_ol`:
 
@@ -103,7 +103,7 @@ python scripts/validation/run_validation.py --check
 ```
 
 Only these scripts exist — do not invent other commands:
-`scripts/validation/{run_validation.py, coverage_audit.py, validation_report.py, validation_diff.py}`.
+`scripts/validation/{run_validation.py, coverage_audit.py, validation_report.py, validation_diff.py, artifact_matrix.py, artifact_diff.py}`.
 
 **Reading results**: `validation-runs/latest.txt` points at the newest
 run (`validation-runs/<ts>/scenarios.json`). Generate the director
