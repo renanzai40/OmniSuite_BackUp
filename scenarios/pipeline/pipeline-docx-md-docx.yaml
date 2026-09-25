@@ -17,12 +17,9 @@ level: human-quality
 category: pipeline
 tier: 2
 requires_env:
-  - OPENAI_API_KEY
+  - ARK_API_KEY
   - ZHIPU_API_KEY
-  - AGNES_API_KEY
   - NVIDIA_NIM_API_KEY
-  - OPENCODE_GO_KEY
-  - OPENCODE_GO_BASE_URL
 instructions: |-
   This scenario proves the MD-path pipeline (OPP extract -> ol translate-md
   -> orf apply-md) produces a DOCX that meets the end-user quality bar.

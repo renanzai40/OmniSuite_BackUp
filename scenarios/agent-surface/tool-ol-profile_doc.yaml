@@ -3,7 +3,7 @@ description: "OL profile_doc profiles a document's writing style (requires real 
 level: agent-user
 category: agent-surface
 tier: 2
-requires_env: [OPENAI_API_KEY, ZHIPU_API_KEY, AGNES_API_KEY, NVIDIA_NIM_API_KEY, MCP_ALLOWED_DIRECTORIES]
+requires_env: [ARK_API_KEY, ZHIPU_API_KEY, NVIDIA_NIM_API_KEY, MCP_ALLOWED_DIRECTORIES]
 instructions: |
   Agent-user conformance (draft D13, mission axis 1): this scenario proves the
   live tool responds as an agent-user expects — schema-shaped arguments accepted,

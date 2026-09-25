@@ -23,12 +23,9 @@ category: pipeline
 tier: 2
 known_gap: true
 requires_env:
-  - OPENAI_API_KEY
+  - ARK_API_KEY
   - ZHIPU_API_KEY
-  - AGNES_API_KEY
   - NVIDIA_NIM_API_KEY
-  - OPENCODE_GO_KEY
-  - OPENCODE_GO_BASE_URL
 instructions: |-
   This is NOT a pass-bar scenario. It asserts the shipped weakened
   four-dimension average for the LQA gate; it never claims the published

@@ -13,12 +13,9 @@ level: human-quality
 category: pipeline
 tier: 2
 requires_env:
-  - OPENAI_API_KEY
+  - ARK_API_KEY
   - ZHIPU_API_KEY
-  - AGNES_API_KEY
   - NVIDIA_NIM_API_KEY
-  - OPENCODE_GO_KEY
-  - OPENCODE_GO_BASE_URL
 instructions: |-
   This scenario proves the XLIFF pipeline path (OPP .xlf + skeleton.zip ->
   OL translate-xliff -> ORF apply-xliff) end to end. The MD path is covered
