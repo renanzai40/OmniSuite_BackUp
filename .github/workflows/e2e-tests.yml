@@ -157,8 +157,8 @@ jobs:
         env:
           OMNI_TEST_FAKE_LLM: "1"
           OMNI_TEST_FAKE_PANDOC: "1"
+          ARK_API_KEY: "sk-dummy"
           ZHIPU_API_KEY: "sk-dummy"
-          AGNES_API_KEY: "sk-dummy"
           NVIDIA_NIM_API_KEY: "nvapi-dummy"
           ORF_MCP_ALLOWED_DIRS: "/tmp:/home/runner/work/Omni_Suite"
           # OL fail-CLOSES without its own allowlist (security.py:283 ->
@@ -177,8 +177,8 @@ jobs:
         env:
           OMNI_TEST_FAKE_LLM: "1"
           OMNI_TEST_FAKE_PANDOC: "1"
+          ARK_API_KEY: "sk-dummy"
           ZHIPU_API_KEY: "sk-dummy"
-          AGNES_API_KEY: "sk-dummy"
           NVIDIA_NIM_API_KEY: "nvapi-dummy"
           ORF_MCP_ALLOWED_DIRS: "/tmp:/home/runner/work/Omni_Suite"
           OL_MCP_ALLOWED_DIRS: "/tmp,/home/runner/work/Omni_Suite"
@@ -199,20 +199,16 @@ jobs:
 
   # -------------------------------------------------------------------------
   # Job 2: Nightly LLM tests (slow, requires real API keys).
-  # Runs on a schedule + manual dispatch. Matrix: {m2.7, deepseek}.
-  # Uses MINIMAX_API_KEY / BAIDU_API_KEY secrets.
+  # Runs on a schedule + manual dispatch.
+  # Uses the canonical OL model-pool secrets: ARK_API_KEY (priority 1),
+  # ZHIPU_API_KEY (priority 2), NVIDIA_NIM_API_KEY (priority 3).
   # -------------------------------------------------------------------------
   nightly-llm:
-    name: Nightly LLM (${{ matrix.provider }})
+    name: Nightly LLM (real)
     runs-on: ubuntu-latest
     timeout-minutes: 90
     needs: ci-suite
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-
-    strategy:
-      fail-fast: false
-      matrix:
-        provider: [minimax, baidu]
 
     steps:
       - uses: actions/checkout@v4
@@ -256,10 +252,9 @@ jobs:
         run: |
           mkdir -p Omni_Localizer/config
           cat > Omni_Localizer/.env <<EOF
-          MINIMAX_API_KEY=${{ secrets.MINIMAX_API_KEY }}
-          BAIDU_API_KEY=${{ secrets.BAIDU_API_KEY }}
-          MINIMAX_BASE_URL=https://api.minimaxi.com/v1
-          BAIDU_BASE_URL=https://qianfan.baidubce.com/v2
+          ARK_API_KEY=${{ secrets.ARK_API_KEY }}
+          ZHIPU_API_KEY=${{ secrets.ZHIPU_API_KEY }}
+          NVIDIA_NIM_API_KEY=${{ secrets.NVIDIA_NIM_API_KEY }}
           EOF
           cp Omni_Localizer/config/default.yaml Omni_Localizer/config/local.yaml
 

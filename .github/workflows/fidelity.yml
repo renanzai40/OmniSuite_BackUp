@@ -66,17 +66,12 @@ jobs:
           pip install -e "/tmp/ol[mcp]"
       - name: Regenerate candidate + score
         env:
+          ARK_API_KEY: sk-dummy
           ZHIPU_API_KEY: ${{ secrets.ZHIPU_API_KEY }}
+          NVIDIA_NIM_API_KEY: nvapi-dummy
           HF_ENDPOINT: 'https://hf-mirror.com'
           PYTHONPATH: /tmp/ol/src
           OL_CONFIG_PATH: /tmp/ol/config/default.yaml
-          ZHIPU_API_KEY_DUMMY: sk-dummy
-          AGNES_API_KEY: sk-dummy
-          BAIDU_API_KEY: sk-dummy
-          NVIDIA_NIM_API_KEY: nvapi-dummy
-          MINIMAX_API_KEY: sk-dummy
-          OPENCODE_GO_KEY: sk-dummy
-          OPENCODE_GO_BASE_URL: https://example.invalid/v1
         run: |
           python tests/fidelity/regenerate_candidate.py || true
           python tests/fidelity/run_fidelity.py || true
