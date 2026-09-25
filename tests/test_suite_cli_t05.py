@@ -25,7 +25,7 @@ SUITE_ROOT = Path(__file__).resolve().parent.parent
 FIXTURE = SUITE_ROOT / "tests" / "production" / "small_fixture.docx"
 VERSION_FILE = SUITE_ROOT / "VERSION"
 
-_LLM_KEYS = ("ZHIPU_API_KEY", "AGNES_API_KEY", "NVIDIA_NIM_API_KEY", "OPENCODE_GO_KEY")
+_LLM_KEYS = ("ARK_API_KEY", "ZHIPU_API_KEY", "NVIDIA_NIM_API_KEY")
 
 _MODULE_PYPROJECTS = {
     "opp": "Omni_Pre_Processor/pyproject.toml",

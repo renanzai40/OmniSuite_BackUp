@@ -146,7 +146,7 @@ class TestFakeLlmFlag:
         Note: _validate_env(require_llm=True) runs before _run_pipeline,
         so we set a dummy API key to avoid early exit.
         """
-        env = {**os.environ, "OPENCODE_GO_KEY": "sk-dummy"}
+        env = {**os.environ, "ARK_API_KEY": "sk-dummy"}
         result = subprocess.run(
             [sys.executable, "-m", "omni_suite", "pipeline", "--help"],
             capture_output=True, text=True, cwd=str(SUITE_ROOT), env=env,

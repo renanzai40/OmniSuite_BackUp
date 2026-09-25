@@ -15,12 +15,13 @@ _VERSION_FILE = Path(__file__).parent.parent / "VERSION"
 _COMPAT_FILE = Path(__file__).parent.parent / "COMPATIBILITY.md"
 _VENV_BIN = Path(__file__).parent.parent / ".venv_ol" / "bin"
 
-# LLM provider keys that OL uses for translation/judging/restoration
+# Canonical LLM provider keys OL uses for translation/judging/restoration —
+# the three priorities in Omni_Localizer/config/default.yaml
+# (ark-code-latest, glm-4.7-flash, minimaxai/minimax-m3).
 _LLM_API_KEYS = [
+    "ARK_API_KEY",
     "ZHIPU_API_KEY",
-    "AGNES_API_KEY",
     "NVIDIA_NIM_API_KEY",
-    "OPENCODE_GO_KEY",
 ]
 
 # Optional but commonly expected env vars
