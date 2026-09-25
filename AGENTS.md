@@ -41,7 +41,7 @@ omni-suite --version
 | **ORF** | Backfill translated content → target format | `orf apply-md <file> --target-format <fmt> -o <out>` | 7 tools (`apply_md`, `apply_xliff`…) | `Omni_Re_Formatter/src/` |
 | **Validation** | Agent-agnostic validation — scenario library + standards + director loop | `python scripts/validation/run_validation.py --list` | 2 tools (`list_validation_scenarios`, `run_validation_scenario`) | `scripts/validation/` + `omni_mcp/validation/` |
 
-Full MCP tool signatures (all 37 tools): [`docs/agent-pipeline-guide.md`](docs/agent-pipeline-guide.md). Per-module internals: each sub-repo's own `AGENTS.md`.
+Full MCP server/tool inventory and namespacing (all 37 tools): [`docs/agent-pipeline-guide.md`](docs/agent-pipeline-guide.md) — full per-tool parameter signatures live in each module's `docs/API.md` (e.g. [`Omni_Pre_Processor/docs/API.md`](Omni_Pre_Processor/docs/API.md)). Per-module internals: each sub-repo's own `AGENTS.md`.
 
 ## Common Tasks
 
@@ -143,7 +143,7 @@ Tier semantics: 1 = hermetic (no keys), 2 = real LLM keys, 3 = paid/external/net
 
 ## MCP Servers
 
-Each module exposes its own MCP server. Full per-tool signatures + config snippets for Claude Desktop / Cursor / OpenCode: [`docs/agent-pipeline-guide.md`](docs/agent-pipeline-guide.md).
+Each module exposes its own MCP server. Server/tool inventory, response envelope, namespacing, and client config notes: [`docs/agent-pipeline-guide.md`](docs/agent-pipeline-guide.md). Full per-tool parameter signatures: each module's `docs/API.md`.
 
 ### OPP MCP Server (9 tools)
 ### OL MCP Server (21 tools)
@@ -187,7 +187,7 @@ Configured in `.pre-commit-config.yaml` at the project root. Install: `pip insta
 | Need | Go to |
 |------|-------|
 | Pipeline selection (MD vs XLIFF path) | `README.md` → Pipeline Selection Strategy |
-| MCP tool signatures / configs / local testing | `docs/agent-pipeline-guide.md` |
+| MCP server/tool inventory + namespacing / local testing | `docs/agent-pipeline-guide.md` |
 | Architecture / data flow | `docs/ARCHITECTURE.md` |
 | OPP→OL→ORF handoff contract | `CONTRACT.md` |
 | Shared glossary | `CONTEXT.md` |

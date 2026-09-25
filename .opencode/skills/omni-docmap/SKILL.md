@@ -29,7 +29,7 @@ All paths are relative to the project root `/mnt/d/贯维/Omni_Suite`. Each entr
 |------|-------|----------|---------|---------------|
 | `CONTEXT.md` | 292 | All agents | Shared glossary / Ubiquitous Language of pipeline terms (OPP/OL/ORF, MD/XLIFF channels, shield/unshield, FAKE_LLM, Foreman/Specialist, etc.) | New pipeline/domain term added or renamed |
 | `README.md` | ~382 | All users | Project overview, pipeline selection strategy, format support matrix, Git submodule notes, environment | Version bumps, pipeline changes, new formats, env changes |
-| `AGENTS.md` | ~218 | AI Agents | Per-module cheat sheet, MCP configuration for Claude/Cursor/OpenCode, MCP tool reference (full signatures), env vars, pre-commit hooks, MCP local testing | MCP tool changes, CLI changes, version bumps, env var changes, new formats |
+| `AGENTS.md` | ~218 | AI Agents | Per-module cheat sheet, MCP configuration for Claude/Cursor/OpenCode, MCP server/tool inventory pointers, env vars, pre-commit hooks, MCP local testing | MCP tool changes, CLI changes, version bumps, env var changes, new formats |
 | `CHANGELOG.md` | ~272 | All devs | Suite-level changelog (Unreleased + released versions) | Every change — always add an entry |
 | `COMPATIBILITY.md` | ~31 | All devs | Suite↔submodule version compatibility matrix | Version bumps of any module |
 | `CONTRIBUTING.md` | ~172 | Contributors | PR workflow, branch naming, test expectations, doc update requirements | Process changes, CI changes |
@@ -54,7 +54,7 @@ All paths are relative to the project root `/mnt/d/贯维/Omni_Suite`. Each entr
 | `docs/七阶段AI开发流程-用CodingAgent交付成品的方法论.md` | 230 | 7-stage AI development methodology reference (how to deliver a finished product with a coding agent) | Methodology revisions |
 | `docs/ARCHITECTURE.md` | ~515 | Cross-module architecture, pipeline diagrams, data flow | Architecture changes, new modules, pipeline flow changes |
 | `docs/API_STABILITY.md` | ~307 | API stability guarantees per module, SemVer policy, deprecation policy | Version bumps, API surface changes, deprecation decisions |
-| `docs/agent-pipeline-guide.md` | — | Full MCP tool signatures for all 37 tools across OPP/OL/ORF (OPP 9 / OL 21 / ORF 7) | MCP tool changes (add/remove/rename params) |
+| `docs/agent-pipeline-guide.md` | — | MCP server/tool inventory + namespacing for all 37 tools across OPP/OL/ORF (OPP 9 / OL 21 / ORF 7); full per-tool params live in each module's `docs/API.md` | MCP tool changes (add/remove/rename params) |
 | `docs/DECISIONS.md` | ~20 | Redirect index → `docs/adr/` (ADR 0001–0006) | Do not edit; add new ADRs in `docs/adr/` |
 | `docs/adr/README.md` | ~39 | ADR index with links to individual decision records | New ADRs, status changes, superseded ADRs |
 | `docs/ERROR_CODES.md` | ~273 | MCP error code catalog + recovery hints (OPP/OL/ORF/omni-mcp) | Error code or recovery-hint changes (add/rename/remove codes) |
@@ -158,7 +158,7 @@ This section tells you **exactly which docs to update** for each type of change.
 | Priority | Document | What to update |
 |----------|----------|----------------|
 | 🔴 CRITICAL | `AGENTS.md` | MCP Tool Reference tables (3 tables: OPP 9/OL 21/ORF 7) + tool counts in Per-Module Cheat Sheet |
-| 🔴 CRITICAL | `docs/agent-pipeline-guide.md` | Full tool parameter signatures |
+| 🔴 CRITICAL | `docs/agent-pipeline-guide.md` | Tool inventory + namespacing; then each module's `docs/API.md` for full per-tool parameters |
 | 🔴 CRITICAL | Module's `AGENTS.md` | MCP tool table in that module's AGENTS.md |
 | 🔴 HIGH | `.opencode/skills/omni-suite/SKILL.md` | MCP tool quick reference + tool counts |
 | 🔴 HIGH | Module's SKILL.md (e.g. `opp_agent/SKILL.md`) | Tool commands and examples |

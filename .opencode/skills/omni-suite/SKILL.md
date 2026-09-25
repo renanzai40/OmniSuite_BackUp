@@ -205,7 +205,7 @@ DOCX, ODT, EPUB, HTML, RTF, PDF, PPTX, ICML, SRT, CSV, XLSX, XML, IPYNB, EML, MS
 - `get_capabilities` — Server capability advertisement
 - `ping` — Health check
 
-For per-tool parameter signatures, see `../docs/agent-pipeline-guide.md`.
+For per-tool parameter signatures, see each module's `docs/API.md` (e.g. `../Omni_Pre_Processor/docs/API.md`); `../docs/agent-pipeline-guide.md` lists tool names, counts, and namespacing.
 
 ## Recent fixes (since 2026-06-01)
 
@@ -237,7 +237,7 @@ Full changelog: `../CHANGELOG.md`. Compatibility matrix: `../COMPATIBILITY.md`.
 
 The actual skill file locations (note the `src/` prefix that CHANGELOG got wrong):
 
-- **OPP** (OpenCode) → `Omni_Pre_Processor/src/opp_agent/SKILL.md` (66 lines, 5 of 7 MCP tools listed)
+- **OPP** (OpenCode) → `Omni_Pre_Processor/src/opp_agent/SKILL.md` (66 lines, 5 of 9 MCP tools listed — defer to `Omni_Pre_Processor/AGENTS.md`)
 - **OPP** (Hermes) → `Omni_Pre_Processor/src/opp_hermes/SKILL.md` (108 lines, alternative agent target)
 - **OL** (OpenCode) → `Omni_Localizer/src/.opencode/skills/ol-localizer/SKILL.md` (76 lines, CLI-focused)
 - **OL** (Hermes) → `Omni_Localizer/src/.hermes/skills/ol-localizer/SKILL.md` (76 lines, CLI-focused)
@@ -252,7 +252,7 @@ use the short `references/<name>.md` form; otherwise use the full path.
 | Doc | Path (if no symlinks) | Purpose | Size |
 |---|---|---|---|
 | Comprehensive agent guide | `../AGENTS.md` | Per-module cheat sheet, MCP config, env vars | 17KB |
-| MCP tool full reference | `../docs/agent-pipeline-guide.md` | All 34 MCP tool signatures | 9KB |
+| MCP tool inventory & namespacing | `../docs/agent-pipeline-guide.md` | All 37 MCP tool names + counts (full params in module `docs/API.md`) | 9KB |
 | Cross-module architecture | `../docs/ARCHITECTURE.md` | 3-stage pipeline internals | 25KB |
 | ADRs | `../docs/DECISIONS.md` | CLI framework divergence, etc. | 3KB |
 | Cross-repo release notes | `../docs/RELEASE_NOTES.md` | Monthly aggregated changes | 1KB |

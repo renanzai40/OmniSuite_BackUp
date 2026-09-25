@@ -192,11 +192,13 @@ plus its tool list — call it to discover the server's runtime surface.
 
 ### Per-Tool Parameters
 
-Detailed parameter schemas, required fields, and type information for
-every tool live in:
-- `AGENTS.md` (suite root) -- MCP Tool Reference tables with descriptions
-  and key parameters
-- `docs/API.md` -- Full parameter reference with types and defaults
+This guide lists tool names, counts, and namespacing only. Detailed
+parameter schemas, required fields, and type information for every tool
+live in each module's `docs/API.md`:
+
+- OPP: `Omni_Pre_Processor/docs/API.md`
+- OL: `Omni_Localizer/docs/API.md`
+- ORF: `Omni_Re_Formatter/docs/API.md`
 
 ---
 

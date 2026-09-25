@@ -132,7 +132,7 @@ On native Windows, `make` targets need a POSIX shell — prefer the explicit com
 | `CONTEXT.md` | Shared glossary / Ubiquitous Language of pipeline terms (suites, modules, channels, artifacts, MCP) | 292 lines |
 | `docs/PRD.md` | Retrospective baseline PRD — single source of truth for requirements (vision, user stories, scope, acceptance criteria) | 61 lines |
 | `AGENTS.md` | Comprehensive agent guide (per-module cheat sheet, MCP config, env vars) | 16KB |
-| `docs/agent-pipeline-guide.md` | MCP tool full parameter reference | 13KB |
+| `docs/agent-pipeline-guide.md` | MCP server/tool inventory + namespacing (names/counts); per-tool params in each module's `docs/API.md` | 13KB |
 | `docs/ARCHITECTURE.md` | Cross-module architecture (3-stage pipeline internals) | 25KB |
 | `docs/DECISIONS.md` | Architecture Decision Records (ADRs) | 1KB |
 | `docs/API_STABILITY.md` | API stability guarantees | 16KB |
